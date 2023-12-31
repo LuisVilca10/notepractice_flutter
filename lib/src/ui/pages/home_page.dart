@@ -7,6 +7,7 @@ import 'package:notepat/src/core/models/note.dart';
 import 'package:notepat/src/ui/pages/add_note_page.dart';
 import 'package:notepat/src/ui/pages/note_page.dart';
 import 'package:notepat/src/ui/pages/search_notes_pages.dart';
+import 'package:notepat/src/ui/pages/trash_page.dart';
 import 'package:notepat/src/ui/widgets/cards/custom_cards.dart';
 import 'package:notepat/src/ui/widgets/custom_bottom_sheet/custom_bottom_sheet.dart';
 import 'package:notepat/src/ui/widgets/custom_bottom_sheet/custom_bottom_sheet_controller.dart';
@@ -67,6 +68,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   onPressed: () => Navigator.pushNamed(context, SearchNotesPage.SEARCH_NOTES_PAGE_ROUTE),
                   icon: Icon(
                     CupertinoIcons.search,
+                    color: fontColor(),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pushNamed(context, TrashPage.TRASH_PAGE_ROUTE),
+                  icon: Icon(
+                    CupertinoIcons.delete_simple,
                     color: fontColor(),
                   ),
                 ),

@@ -11,6 +11,7 @@ import 'package:notepat/src/ui/pages/lading_page.dart';
 import 'package:notepat/src/ui/pages/note_page.dart';
 import 'package:notepat/src/ui/pages/private_note.dart';
 import 'package:notepat/src/ui/pages/search_notes_pages.dart';
+import 'package:notepat/src/ui/pages/trash_page.dart';
 
 void main(){
   ErrorWidget.builder =
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         AddNotePage.ADD_NOTE_PAGE_ROUTE:(context) => AddNotePage(),
         AddAttachmentPage.ADD_ATTACHMENT_PAGE_ROUTE: (context) => AddAttachmentPage(),
         ExportNotesPage.EXPORT_NOTES_PAGE_ROUTE: (context) => ExportNotesPage(),
+        TrashPage.TRASH_PAGE_ROUTE:(context) => TrashPage(),
       },
       initialRoute: LandingPage.LANDING_PAGE_ROUTE,
       debugShowCheckedModeBanner: false,
