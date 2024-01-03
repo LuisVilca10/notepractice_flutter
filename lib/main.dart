@@ -8,12 +8,20 @@ import 'package:notepat/src/ui/pages/error_page.dart';
 import 'package:notepat/src/ui/pages/export_notes_page.dart';
 import 'package:notepat/src/ui/pages/home_page.dart';
 import 'package:notepat/src/ui/pages/lading_page.dart';
+import 'package:notepat/src/ui/pages/list_note_page.dart';
 import 'package:notepat/src/ui/pages/note_page.dart';
 import 'package:notepat/src/ui/pages/private_note.dart';
 import 'package:notepat/src/ui/pages/search_notes_pages.dart';
+import 'package:notepat/src/ui/pages/todo_list_page.dart';
+import 'firebase_options.dart';
 import 'package:notepat/src/ui/pages/trash_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main(){
+void main()async{
+   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   ErrorWidget.builder =
       (FlutterErrorDetails details) => ErrorPage(details: details);
   runApp(const MyApp());
@@ -38,6 +46,8 @@ class MyApp extends StatelessWidget {
         AddAttachmentPage.ADD_ATTACHMENT_PAGE_ROUTE: (context) => AddAttachmentPage(),
         ExportNotesPage.EXPORT_NOTES_PAGE_ROUTE: (context) => ExportNotesPage(),
         TrashPage.TRASH_PAGE_ROUTE:(context) => TrashPage(),
+        TODOListPage.TODO_LIST_PAGE_ROUTE:(context) => TODOListPage(),
+        ListSimpleNotes.LIST_SIMPLE_NOTES_ROUTE:(context) => ListSimpleNotes(),
       },
       initialRoute: LandingPage.LANDING_PAGE_ROUTE,
       debugShowCheckedModeBanner: false,

@@ -4,8 +4,9 @@ import 'package:notepat/src/core/controllers/theme_controller.dart';
 import 'package:notepat/src/core/models/note.dart';
 import 'package:notepat/src/ui/pages/add_attachment_page.dart';
 import 'package:notepat/src/ui/pages/export_notes_page.dart';
-import 'package:notepat/src/ui/pages/home_page.dart';
+//import 'package:notepat/src/ui/pages/home_page.dart';
 import 'package:notepat/src/ui/pages/note_page.dart';
+import 'package:notepat/src/ui/pages/todo_list_page.dart';
 import 'package:notepat/src/ui/widgets/custom_bottom_sheet/custom_bottom_sheet.dart';
 import 'package:notepat/src/ui/widgets/custom_bottom_sheet/custom_bottom_sheet_controller.dart';
 import 'package:notepat/src/ui/widgets/custom_tiles/custom_tile.dart';
@@ -104,7 +105,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin{
                           title: "Tareas",
                           leading: Icons.task,
                           onTap: () => Navigator.pushNamed(
-                              context, HomePage.HOME_PAGE_ROUTE),
+                              context, TODOListPage.TODO_LIST_PAGE_ROUTE),
                         ),
                         SimpleTile(
                           title: "Notas privadas",

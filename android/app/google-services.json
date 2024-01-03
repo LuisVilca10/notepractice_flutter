@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "191300860128",
+    "project_id": "block-notas-e39fa",
+    "storage_bucket": "block-notas-e39fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191300860128:android:2208172893182259533885",
+        "android_client_info": {
+          "package_name": "com.example.notepat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTnG3IWDRNtGt36_sE83UdsuXpAu_gTaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

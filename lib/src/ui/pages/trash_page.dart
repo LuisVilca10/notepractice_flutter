@@ -48,7 +48,9 @@ class _BodyState extends State<_Body> {
           title: Text("Papelera", style: TextStyle(color: fontColor(), fontWeight: FontWeight.bold),),
         ),
         Expanded(
-          child: ListView.builder(itemCount: notes.length,itemBuilder: (context, index){
+          child: ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: notes.length,itemBuilder: (context, index){
             return ListTile(
               title: Text(notes[index].title??"", style: TextStyle(color: fontColor()),),
               subtitle: Text(notes[index].description??"",overflow: TextOverflow.ellipsis, style: TextStyle(
@@ -65,7 +67,7 @@ class _BodyState extends State<_Body> {
                 },
                 icon: Icon(Icons.more_vert, color: fontColor(),), itemBuilder: (context) => [
                 PopupMenuItem(child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Icon(Icons.restart_alt),
                     //SizedBox(width:20,),
@@ -73,7 +75,7 @@ class _BodyState extends State<_Body> {
                   ],
                 ), value: 0,),
                 PopupMenuItem(child: Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Icon(Icons.delete_forever),
                     Text("Eliminar"),

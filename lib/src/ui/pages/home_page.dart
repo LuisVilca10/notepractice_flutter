@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:notepat/src/core/constants/parameters.dart';
 import 'package:notepat/src/core/controllers/theme_controller.dart';
 import 'package:notepat/src/core/models/note.dart';
+import 'package:notepat/src/core/services/firebase_services.dart';
 import 'package:notepat/src/ui/pages/add_note_page.dart';
 import 'package:notepat/src/ui/pages/note_page.dart';
 import 'package:notepat/src/ui/pages/search_notes_pages.dart';
@@ -11,6 +12,7 @@ import 'package:notepat/src/ui/pages/trash_page.dart';
 import 'package:notepat/src/ui/widgets/cards/custom_cards.dart';
 import 'package:notepat/src/ui/widgets/custom_bottom_sheet/custom_bottom_sheet.dart';
 import 'package:notepat/src/ui/widgets/custom_bottom_sheet/custom_bottom_sheet_controller.dart';
+import 'package:notepat/src/ui/widgets/status_message/status_message.dart';
 
 GlobalKey<ScaffoldState> homePageKey = GlobalKey<ScaffoldState>();
 GlobalKey<ScaffoldMessengerState> homePageMessengerKey =
@@ -28,18 +30,17 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin{
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late CustomBottomSheetController _controller;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller=CustomBottomSheetController(this)
-    ..addListener((){
-      setState(() {
-        
+    _controller = CustomBottomSheetController(this)
+      ..addListener(() {
+        setState(() {});
       });
-    });
   }
 
   @override
@@ -51,7 +52,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       child: Stack(
         children: [
           Scaffold(
-            floatingActionButton: FloatingActionButton(backgroundColor: theme.primary(),onPressed: () => Navigator.pushNamed(context, AddNotePage.ADD_NOTE_PAGE_ROUTE), child: Icon(Icons.add, size: 25),),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: theme.primary(),
+              onPressed: () =>
+                  Navigator.pushNamed(context, AddNotePage.ADD_NOTE_PAGE_ROUTE),
+              child: Icon(Icons.add, size: 25),
+            ),
             backgroundColor: theme.background(),
             appBar: AppBar(
               automaticallyImplyLeading: false,
@@ -65,14 +71,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   )),
               actions: [
                 IconButton(
-                  onPressed: () => Navigator.pushNamed(context, SearchNotesPage.SEARCH_NOTES_PAGE_ROUTE),
+                  onPressed: () => Navigator.pushNamed(
+                      context, SearchNotesPage.SEARCH_NOTES_PAGE_ROUTE),
                   icon: Icon(
                     CupertinoIcons.search,
                     color: fontColor(),
                   ),
                 ),
                 IconButton(
-                  onPressed: () => Navigator.pushNamed(context, TrashPage.TRASH_PAGE_ROUTE),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, TrashPage.TRASH_PAGE_ROUTE),
                   icon: Icon(
                     CupertinoIcons.delete_simple,
                     color: fontColor(),
@@ -91,17 +99,33 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             ),
             body: _Body(),
           ),
-          Transform.translate(offset: Offset(0,size.height+100-(size.height*_controller.value)),child: CustomBottomSheet(close: (){
-            _controller.close();
-          },),)
+          Transform.translate(
+            offset: Offset(
+                0, size.height + 100 - (size.height * _controller.value)),
+            child: CustomBottomSheet(
+              close: () {
+                _controller.close();
+              },
+            ),
+          )
         ],
       ),
     );
   }
 }
 
-class _Body extends StatelessWidget {
-  const _Body({super.key});
+// ignore: must_be_immutable
+class _Body extends StatefulWidget {
+  _Body({super.key});
+
+  @override
+  State<_Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<_Body> {
+  FirebaseServices _services = FirebaseServices.instance;
+
+  List<dynamic> notes = [];
 
   @override
   Widget build(BuildContext context) {
@@ -117,47 +141,73 @@ class _Body extends StatelessWidget {
           ),
         ),
         Expanded(
-            child: StaggeredGridView.countBuilder(
-          physics: BouncingScrollPhysics(),
-          crossAxisCount: 2,
-          itemCount: notes.length,
-          itemBuilder: (context, index) {
-            Note nota;
-            if (notes[index].type == TypeNote.Text) {
-              nota = notes[index];
-              return SimpleCard(nota = notes[index], onTap: () {
-                print("Tipo de nota: ${nota.type}");
+            child: FutureBuilder(
+                future: _services.read("notes"),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return StatusMessage(() async {
+                      await _services.read("notes");
+                    }, StatusNetwork.Exception);
+                  }
+                  if (!snapshot.hasData) {
+                    return Container();
+                  } else {
+                    Map<String, dynamic> response = snapshot.data as  Map<String, dynamic>;
+                    if (response["status"]==StatusNetwork.Connected) {
+                      notes=response["data"];
+                      return StaggeredGridView.countBuilder(
+                        physics: BouncingScrollPhysics(),
+                        crossAxisCount: 2,
+                        itemCount: notes.length,
+                        itemBuilder: (context, index) {
+                          Note nota;
+                          if (notes[index].type == TypeNote.Text) {
+                            nota = notes[index];
+                            return SimpleCard(nota = notes[index], onTap: () {
+                              print("Tipo de nota: ${nota.type}");
 
-                Navigator.pushNamed(context, NotePage.NOTE_PAGE_ROUTE,
-                    arguments: NotePageArguments(note: nota));
-              });
-            }
-            ;
-            if (notes[index].type == TypeNote.Image) {
-              nota = notes[index];
-              return ImageCard(nota = notes[index], onTap: () {
-                print("Tipo de nota: ${nota.type}");
+                              Navigator.pushNamed(
+                                  context, NotePage.NOTE_PAGE_ROUTE,
+                                  arguments: NotePageArguments(note: nota));
+                            });
+                          }
+                          ;
+                          if (notes[index].type == TypeNote.Image) {
+                            nota = notes[index];
+                            return ImageCard(nota = notes[index], onTap: () {
+                              print("Tipo de nota: ${nota.type}");
 
-                Navigator.pushNamed(context, NotePage.NOTE_PAGE_ROUTE,
-                    arguments: NotePageArguments(note: nota));
-              });
-            }
-            if (notes[index].type == TypeNote.TextImage) {
-              nota = notes[index];
-              return TextImageCard(nota = notes[index], onTap: () {
-                print("Tipo de nota: ${nota.type}");
+                              Navigator.pushNamed(
+                                  context, NotePage.NOTE_PAGE_ROUTE,
+                                  arguments: NotePageArguments(note: nota));
+                            });
+                          }
+                          if (notes[index].type == TypeNote.TextImage) {
+                            nota = notes[index];
+                            return TextImageCard(nota = notes[index],
+                                onTap: () {
+                              print("Tipo de nota: ${nota.type}");
 
-                Navigator.pushNamed(context, NotePage.NOTE_PAGE_ROUTE,
-                    arguments: NotePageArguments(note: nota));
-              });
-            }
-            return Container();
-          },
-          staggeredTileBuilder: (int index) =>
-              new StaggeredTile.count(1, index.isEven ? 1 : 1.3),
-          mainAxisSpacing: 1,
-          crossAxisSpacing: 1.0,
-        )),
+                              Navigator.pushNamed(
+                                  context, NotePage.NOTE_PAGE_ROUTE,
+                                  arguments: NotePageArguments(note: nota));
+                            });
+                          }
+                          return Container();
+                        },
+                        staggeredTileBuilder: (int index) =>
+                            new StaggeredTile.count(1, index.isEven ? 1 : 1.3),
+                        mainAxisSpacing: 1,
+                        crossAxisSpacing: 1.0,
+                      );
+                    }
+                    else{
+                      return StatusMessage(()async{
+
+                      }, StatusNetwork.Exception);
+                    }
+                  }
+                })),
       ],
     );
   }

@@ -1,12 +1,22 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:notepat/src/core/constants/parameters.dart';
 import 'package:notepat/src/core/controllers/theme_controller.dart';
 import 'package:notepat/src/core/models/note.dart';
+import 'package:notepat/src/core/services/firebase_services.dart';
 import 'package:notepat/src/ui/widgets/buttons/simple_buttons.dart';
+import 'package:notepat/src/ui/widgets/snackbars/custom_snackbar.dart';
 import 'package:notepat/src/ui/widgets/text_inputs/text_inputs.dart';
 
 Color fontColor() {
   return ThemeController.instance.brightnessValue ? Colors.black : Colors.white;
 }
+
+GlobalKey<ScaffoldMessengerState> addPageMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 class AddNotePageArguments {
   final bool edit;
@@ -64,9 +74,10 @@ class __BodyState extends State<_Body> {
   String? image;
 
   Note note = Note();
- // final ImagePicker _picker = ImagePicker();
+  // ignore: unused_field
+  final ImagePicker _picker = ImagePicker();
 
- // FirebaseServices _services = FirebaseServices.instance;
+  FirebaseServices _services = FirebaseServices.instance;
 
   String parseDate() {
     final date = DateTime.now();
@@ -98,8 +109,15 @@ class __BodyState extends State<_Body> {
               ? Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: ListTile(
-                    title: Text(image!),
-                    leading: Icon(Icons.file_present_outlined),
+                    title: Text(
+                      image!,
+                      style: TextStyle(color: fontColor()),
+                    ),
+                    leading: Icon(
+                      Icons.file_upload_rounded,
+                      color: fontColor(),
+                      size: 35,
+                    ),
                   ),
                 )
               : SizedBox(),
@@ -110,7 +128,16 @@ class __BodyState extends State<_Body> {
                   title: "Camara",
                   icon: Icons.camera,
                   onTap: () async {
-                   /* try {
+                    final imagePicker = ImagePicker();
+                    final pickedFile =
+                        await imagePicker.pickImage(source: ImageSource.camera);
+
+                    if (pickedFile != null) {
+                      setState(() {
+                        image = pickedFile.path;
+                      });
+                    }
+                    /* try {
                       final XFile? photo =
                           await _picker.pickImage(source: ImageSource.camera);
                       if (photo != null) setState(() => image = photo.path);
@@ -124,14 +151,15 @@ class __BodyState extends State<_Body> {
                   title: "Galeria",
                   icon: Icons.image,
                   onTap: () async {
-                    /*try {
+                    try {
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles();
                       if (result != null) {
+                        // ignore: unused_local_variable
                         File file = File(result.files.single.path!);
                         setState(() => image = result.files.single.path);
                       }
-                    } catch (e) {}*/
+                    } catch (e) {}
                   },
                   primaryColor: false,
                 ),
@@ -145,16 +173,16 @@ class __BodyState extends State<_Body> {
               note.title = _title.value.text;
               note.description = _description.value.text;
               note.private = widget.arguments.private;
-              /*if (image != null) {
+              if (image != null) {
                 final Map<String, dynamic> response =
-                    await _services.uploadImage(File(image!));
+                    await _services.updloadImage(File(image!));
                 print(response["status"]);
                 if (response["status"] == StatusNetwork.Connected) {
-                  print("url:"+response["data"]);
+                  print("url:" + response["data"]);
                   note.image = response["data"];
                   note.type = TypeNote.Image;
                 }
-              }*/
+              }
 
               final Map<String, dynamic> response;
               final Map<String, dynamic> values = {
@@ -167,7 +195,7 @@ class __BodyState extends State<_Body> {
                 "type": note.type.toString(),
               };
 
-              /*if (widget.arguments.edit) {
+              if (widget.arguments.edit) {
                 response = await _services.update("notes", note.id!, values);
               } else {
                 response = await _services.create("notes", values);
@@ -175,18 +203,21 @@ class __BodyState extends State<_Body> {
 
               switch (response["status"]) {
                 case StatusNetwork.Connected:
-                  print("Se adiciono correctamente");
+                  showSnackBar(
+                      addPageMessengerKey, "Se adiciono correctamente");
                   break;
                 case StatusNetwork.Exception:
-                  print("No se adiciono correctamente");
+                  showSnackBar(
+                      addPageMessengerKey, "No se adiciono correctamente");
                   break;
                 case StatusNetwork.NoInternet:
-                  print("No hay una conexion a internet");
+                  showSnackBar(
+                      addPageMessengerKey, "No hay una conexion a internet");
                   break;
                 default:
-                  print("Ocurrio un error");
+                  showSnackBar(addPageMessengerKey, "Ocurrio un error");
                   break;
-              }*/
+              }
             },
           )
         ],

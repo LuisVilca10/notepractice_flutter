@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:notepat/src/core/constants/parameters.dart';
-/*import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 TypeNote convertType(String value) {
   return TypeNote.values.firstWhere((element) => element.toString() == value);
@@ -8,7 +9,7 @@ TypeNote convertType(String value) {
 StateNote convertState(String value) {
   return StateNote.values.firstWhere((element) => element.toString() == value);
 }
-*/
+
 class Note {
   String? title;
   String? date;
@@ -31,7 +32,7 @@ class Note {
       this.state = StateNote.Visible,
       this.id});
 
-  /*factory Note.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot, String id) {
+  factory Note.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot, String id) {
     return Note(
         image: snapshot["image"],
         title: snapshot["title"],
@@ -46,7 +47,7 @@ class Note {
   void mostrar() {
     print(this.title);
     print(this.description);
-  }*/
+  }
 }
 
 Note note = Note(

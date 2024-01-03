@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:notepat/src/core/controllers/theme_controller.dart';
+import 'package:notepat/src/core/services/file_services.dart';
+import 'package:notepat/src/ui/pages/list_note_page.dart';
 import 'package:notepat/src/ui/widgets/custom_tiles/custom_tile.dart';
 
 Color fontColor() {
@@ -96,7 +98,10 @@ class _Body extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Flexible(flex: 2,child: _card("PDF", Icons.picture_as_pdf_rounded, () => null)),
+                  Flexible(flex: 2,child: _card("PDF", Icons.picture_as_pdf_rounded,  () => Navigator.pushNamed(context,
+                                ListSimpleNotes.LIST_SIMPLE_NOTES_ROUTE,
+                                arguments: ListSimpleArguments(
+                                    action: () {}, pdf: true)))),
                   Flexible(flex: 2,child: _card("Notas", Icons.note_alt_sharp, () => null)),
                   Flexible(flex: 2,child: _card("PDF", Icons.image, () => null)),
                 ],
